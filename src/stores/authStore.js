@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-// URL API BARU SESUAI REQUEST
 const API_URL = 'https://wanzofc-dev.vercel.app/api';
 
 export const useAuthStore = defineStore('auth', {
@@ -14,9 +13,19 @@ export const useAuthStore = defineStore('auth', {
     isAdmin: (state) => state.user?.role === 'admin'
   },
   actions: {
-    async login(credentials) {
-      const res = await axios.post(`${API_URL}/auth/login`, credentials);
-      this.setUserData(res.data);
+    async login(payload) { // payload bisa {username, password} atau {username, sseoCode, method}
+      try {
+          const res = await axios.post(`${API_URL}/auth/login`, payload);
+          this.setUserData(res.data);
+          // Apply Font
+          this.applyFont(res.data.fontPreference);
+          return true;
+      } catch (e) {
+          if (e.response && e.response.data.message === 'ACCOUNT_BANNED') {
+              throw new Error('BANNED');
+          }
+          throw e;
+      }
     },
     
     async fetchProfile() {
@@ -26,9 +35,12 @@ export const useAuthStore = defineStore('auth', {
             headers: { Authorization: `Bearer ${this.token}` }
         });
         this.setUserData(res.data, false);
+        this.applyFont(res.data.fontPreference);
       } catch (e) {
-        console.error("Gagal refresh profile:", e);
-        if(e.response && e.response.status === 401) this.logout();
+        if(e.response && e.response.status === 403 && e.response.data.message === 'ACCOUNT_BANNED') {
+            this.logout();
+            window.location.href = '/banned'; // Force redirect
+        }
       }
     },
 
@@ -39,6 +51,15 @@ export const useAuthStore = defineStore('auth', {
           this.token = data.token;
           localStorage.setItem('token', data.token);
       }
+    },
+
+    applyFont(fontName) {
+        const body = document.body;
+        body.classList.remove('font-roboto', 'font-press', 'font-fira', 'font-hack');
+        if(fontName === 'Press Start 2P') body.classList.add('font-press');
+        else if(fontName === 'Fira Code') body.classList.add('font-fira');
+        else if(fontName === 'Hack') body.classList.add('font-hack');
+        else body.classList.add('font-roboto');
     },
 
     logout() {

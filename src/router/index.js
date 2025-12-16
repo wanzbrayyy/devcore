@@ -11,7 +11,9 @@ import MaintenanceView from '../views/MaintenanceView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import DocsView from '../views/DocsView.vue'
 import PricingView from '../views/PricingView.vue'
-import DemonView from '../views/DemonView.vue' // Import Baru
+import DemonView from '../views/DemonView.vue'
+import SettingsView from '../views/SettingsView.vue'
+import BannedView from '../views/BannedView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -23,14 +25,14 @@ const router = createRouter({
     { path: '/quotes', component: QuotesView },
     { path: '/pricing', component: PricingView },
     { path: '/maintenance', component: MaintenanceView },
+    { path: '/banned', component: BannedView },
     
+    { path: '/settings', component: SettingsView, meta: { requiresAuth: true } },
     { path: '/profile', component: ProfileView, meta: { requiresAuth: true } },
     { path: '/docs', component: DocsView, meta: { requiresAuth: true } },
     { path: '/terminal', component: TerminalView, meta: { requiresAuth: true } },
     { path: '/history', component: TerminalView, meta: { requiresAuth: true } },
     { path: '/admin', component: AdminView, meta: { requiresAuth: true, adminOnly: true } },
-    
-    // DEMON ROUTE
     { path: '/demon', component: DemonView, meta: { requiresAuth: true } }
   ]
 })

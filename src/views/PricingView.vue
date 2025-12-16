@@ -17,7 +17,8 @@
                 <li class="disabled"><i class="fas fa-times"></i> No Custom Dev Name</li>
                 <li><i class="fas fa-shield-alt"></i> Role: <strong>PREMIUM</strong></li>
             </ul>
-            <button class="btn btn-buy">BUY PREMIUM</button>
+            <!-- BUTTON WITH WA LINK -->
+            <button @click="buyPlan('premium')" class="btn btn-buy">BUY PREMIUM</button>
         </div>
 
         <!-- PLAN 2: DEMON (SPECIAL) -->
@@ -53,7 +54,8 @@
                 </div>
             </div>
 
-            <button class="btn btn-demon">BECOME DEMON</button>
+            <!-- BUTTON WITH WA LINK -->
+            <button @click="buyPlan('demon')" class="btn btn-demon">BECOME DEMON</button>
         </div>
 
     </div>
@@ -63,6 +65,23 @@
 <script setup>
 import { ref } from 'vue';
 const showDemon = ref(false);
+
+const buyPlan = (plan) => {
+    const phoneNumber = "6288801074059";
+    let message = "";
+
+    if (plan === 'premium') {
+        message = "Halo Admin DevCORE, saya ingin membeli paket PREMIUM (15K). Mohon info pembayarannya.";
+    } else if (plan === 'demon') {
+        message = "Halo Admin DevCORE, saya ingin membeli paket DEMON (25K) untuk akses Unlimited & Fitur Jahat. Mohon info pembayarannya.";
+    }
+
+    // Encode URL agar spasi dan karakter khusus terbaca
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    
+    // Buka di tab baru
+    window.open(url, '_blank');
+};
 </script>
 
 <style scoped>
